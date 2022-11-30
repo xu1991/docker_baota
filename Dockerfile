@@ -1,27 +1,21 @@
-FROM centos:7
-MAINTAINER Rabbit
+FROM debian
 
 #设置entrypoint和letsencrypt映射到www文件夹下持久化
 COPY entrypoint.sh /entrypoint.sh
 COPY set_default.py /set_default.py
-
-RUN mkdir -p /www/letsencrypt \
-    && ln -s /www/letsencrypt /etc/letsencrypt \
-    && rm -f /etc/init.d \
-    && mkdir /www/init.d \
-    && ln -s /www/init.d /etc/init.d \
-    && chmod +x /entrypoint.sh \
-    && mkdir /www/wwwroot
-    #更新系统 安装依赖 安装宝塔面板
-    && cd /home \
-    && yum -y update \
-    && yum -y install wget openssh-server \
-    && echo 'Port 63322' > /etc/ssh/sshd_config \
-    && wget -O install.sh http://download.bt.cn/install/install_6.0.sh \
-    && echo y | bash install.sh \
-    && python /set_default.py \
-    && echo '["linuxsys", "webssh"]' > /www/server/panel/config/index.json \
-    && yum clean all
+ 
+RUN /bin/bash -c '\
+sed -i "s/deb.debian.org/mirrors.ustc.edu.cn/g" /etc/apt/sources.list;\
+apt-get update;\
+export DEBIAN_FRONTEND=noninteractive;\
+apt-get install -y init procps wget iproute2;\
+export go=y;\
+wget -O install.sh http://download.bt.sy/install/install-ubuntu_6.0.sh && sudo bash install.sh -y;\
+export go=;\
+export DEBIAN_FRONTEND=;\
+bt 11;\
+echo 123456 | bt 5 123456;\'
+echo yxll | bt 6 yxll;\'
 
 WORKDIR /www/wwwroot
 CMD /entrypoint.sh
