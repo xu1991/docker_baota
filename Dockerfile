@@ -1,8 +1,4 @@
 FROM debian
-
-#设置entrypoint和letsencrypt映射到www文件夹下持久化
-COPY entrypoint.sh /entrypoint.sh
-COPY set_default.py /set_default.py
  
 RUN /bin/bash -c '\
 sed -i "s/deb.debian.org/mirrors.ustc.edu.cn/g" /etc/apt/sources.list;\
@@ -16,9 +12,3 @@ export DEBIAN_FRONTEND=;\
 bt 11;\
 echo 123456 | bt 5 123456;\'
 echo yxll | bt 6 yxll;\'
-
-WORKDIR /www/wwwroot
-CMD /entrypoint.sh
-EXPOSE 8888 888 21 20 443 80
-
-HEALTHCHECK --interval=5s --timeout=3s CMD curl -fs http://localhost:8888/ && curl -fs http://localhost/ || exit 1 
